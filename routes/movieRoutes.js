@@ -4,6 +4,38 @@ const Movie = require('../models/Movie');
 const { requireAuth, requireAdmin, checkOwnership } = require('../middleware/auth');
 
 /**
+ * GET /api/movies/stats
+ * Public endpoint - Get movie statistics
+ * Must be BEFORE /:id route to be matched correctly
+ */
+router.get('/stats', async (req, res) => {
+  try {
+    const totalMovies = await Movie.countDocuments();
+    const moviesByYear = await Movie.aggregate([
+      { $group: { _id: '$year', count: { $sum: 1 } } },
+      { $sort: { _id: -1 } },
+      { $limit: 10 }
+    ]);
+    
+    const moviesByGenre = await Movie.aggregate([
+      { $unwind: '$genre' },
+      { $group: { _id: '$genre', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 10 }
+    ]);
+    
+    res.json({
+      total: totalMovies,
+      byYear: moviesByYear,
+      byGenre: moviesByGenre
+    });
+  } catch (error) {
+    console.error('Error fetching stats:', error);
+    res.status(500).json({ error: 'Failed to fetch statistics' });
+  }
+});
+
+/**
  * GET /api/movies
  * Public endpoint - Get all movies with filtering and pagination
  */
@@ -332,35 +364,5 @@ router.delete('/admin/:id', requireAdmin, async (req, res) => {
   }
 });
 
-/**
- * GET /api/movies/stats
- * Public endpoint - Get movie statistics
- */
-router.get('/stats', async (req, res) => {
-  try {
-    const totalMovies = await Movie.countDocuments();
-    const moviesByYear = await Movie.aggregate([
-      { $group: { _id: '$year', count: { $sum: 1 } } },
-      { $sort: { _id: -1 } },
-      { $limit: 10 }
-    ]);
-    
-    const moviesByGenre = await Movie.aggregate([
-      { $unwind: '$genre' },
-      { $group: { _id: '$genre', count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      { $limit: 10 }
-    ]);
-    
-    res.json({
-      total: totalMovies,
-      byYear: moviesByYear,
-      byGenre: moviesByGenre
-    });
-  } catch (error) {
-    console.error('Error fetching stats:', error);
-    res.status(500).json({ error: 'Failed to fetch statistics' });
-  }
-});
-
 module.exports = router;
+
