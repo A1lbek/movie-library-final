@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const { connectToDatabase } = require('./database/mongodb');
 const { router: authRouter, initializeDb: initAuthDb } = require('./routes/auth');
-const { requireAuth, isAuthenticated } = require('./middleware/auth');
+const { requireAuth, requireAdmin, isAuthenticated } = require('./middleware/auth');
 const SimpleSession = require('./middleware/simpleSession');
 
 const app = express();
@@ -204,6 +204,35 @@ app.get('/api/movies', (req, res) => {
   } catch (error) {
     console.error('Error fetching movies:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Admin-only: get all movies with full details
+app.get('/api/movies/admin/all', requireAdmin, (req, res) => {
+  try {
+    const movies = readMoviesFromFile();
+    return res.json({ count: movies.length, movies });
+  } catch (error) {
+    console.error('Error fetching admin movies:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Admin-only: delete any movie by id
+app.delete('/api/movies/admin/:id', requireAdmin, (req, res) => {
+  try {
+    const { id } = req.params;
+    const movies = readMoviesFromFile();
+    const idx = movies.findIndex(m => m._id === id);
+    if (idx === -1) return res.status(404).json({ error: 'Movie not found' });
+    const deleted = movies.splice(idx, 1)[0];
+    if (writeMoviesToFile(movies)) {
+      return res.json({ message: 'Movie deleted by admin', movie: { _id: deleted._id, title: deleted.title, year: deleted.year } });
+    }
+    return res.status(500).json({ error: 'Failed to delete movie' });
+  } catch (error) {
+    console.error('Error deleting movie (admin):', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 });
 
