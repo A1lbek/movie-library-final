@@ -41,7 +41,7 @@ router.post('/register', async (req, res) => {
       });
     }
 
-    const newUser = User.createUserObject(username, password, email);
+    const newUser = await User.createUserObject(username, password, email);
     const result = await usersCollection.insertOne(newUser);
 
     req.session.userId = result.insertedId.toString();
@@ -49,6 +49,7 @@ router.post('/register', async (req, res) => {
       username: newUser.username,
       email: newUser.email
     };
+    req.session.role = newUser.role;
     req.sessionSave();
 
     res.status(201).json({ 
@@ -92,7 +93,7 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    const isPasswordValid = User.verifyPassword(password, user.password);
+    const isPasswordValid = await User.verifyPassword(password, user.password);
 
     if (!isPasswordValid) {
       return res.status(401).json({ 
@@ -105,6 +106,7 @@ router.post('/login', async (req, res) => {
       username: user.username,
       email: user.email
     };
+    req.session.role = user.role;
     req.sessionSave();
 
     res.json({ 
