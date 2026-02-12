@@ -118,10 +118,24 @@ function attachRole(req, res, next) {
   next();
 }
 
+/**
+ * Middleware: Check if user is authenticated
+ * Just attaches user role, doesn't require authentication
+ */
+function isAuthenticated(req, res, next) {
+  if (req.session && req.session.role) {
+    req.userRole = req.session.role;
+  } else {
+    req.userRole = null;
+  }
+  next();
+}
+
 module.exports = { 
   requireAuth, 
   requireAdmin, 
   attachUser, 
   checkOwnership,
-  attachRole
+  attachRole,
+  isAuthenticated
 };
