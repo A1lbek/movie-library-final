@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 
 const UserSchema = new mongoose.Schema({
   username: { 
@@ -62,25 +62,28 @@ UserSchema.statics.validateUserData = function(username, password, email) {
 };
 
 /**
- * Static method: Hash password for new user
+ * Static method: Hash password for new user using PBKDF2
  */
-UserSchema.statics.hashPassword = async function(password) {
-  const salt = await bcrypt.genSalt(10);
-  return await bcrypt.hash(password, salt);
+UserSchema.statics.hashPassword = function(password) {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha256').toString('hex');
+  return `${salt}:${hash}`;
 };
 
 /**
  * Static method: Verify password against hash
  */
-UserSchema.statics.verifyPassword = async function(password, hash) {
-  return await bcrypt.compare(password, hash);
+UserSchema.statics.verifyPassword = function(password, hashedPassword) {
+  const [salt, hash] = hashedPassword.split(':');
+  const hashCheck = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha256').toString('hex');
+  return hash === hashCheck;
 };
 
 /**
  * Static method: Create new user object with hashed password
  */
-UserSchema.statics.createUserObject = async function(username, password, email) {
-  const hashedPassword = await this.hashPassword(password);
+UserSchema.statics.createUserObject = function(username, password, email) {
+  const hashedPassword = this.hashPassword(password);
   
   return {
     username: username.trim(),

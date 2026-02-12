@@ -41,10 +41,8 @@ async function createAdmin() {
       process.exit(0);
     }
     
-    // Hash password using PBKDF2 (same as in your authentication)
-    const salt = crypto.randomBytes(16).toString('hex');
-    const hash = crypto.pbkdf2Sync(adminPassword, salt, 10000, 64, 'sha512').toString('hex');
-    const hashedPassword = `${salt}:${hash}`;
+    // Hash password using same method as User model
+    const hashedPassword = User.hashPassword(adminPassword);
     
     // Create admin user
     const admin = new User({
