@@ -12,11 +12,16 @@ const crypto = require('crypto');
 async function createAdmin() {
   try {
     console.log('Connecting to MongoDB...');
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/movie-library', {
+    const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017';
+    const dbName = process.env.MONGODB_DB || 'movie-db';
+    console.log('Target URI:', uri);
+    console.log('Target DB:', dbName);
+    await mongoose.connect(uri, {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
+      dbName
     });
-    console.log('Connected to MongoDB');
+    console.log('Connected to MongoDB', mongoose.connection.name);
     
     // Admin credentials (CHANGE THESE IN PRODUCTION!)
     const adminUsername = 'admin';

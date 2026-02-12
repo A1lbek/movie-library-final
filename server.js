@@ -250,7 +250,7 @@ app.get('/api/movies/:id', (req, res) => {
   }
 });
 
-app.post('/api/movies', requireAuth, validateMovieData, (req, res) => {
+app.post('/api/movies', requireAdmin, validateMovieData, (req, res) => {
   try {
     const { title, year, director, genre, rating, age_rating, description } = req.body;
     
@@ -283,7 +283,7 @@ app.post('/api/movies', requireAuth, validateMovieData, (req, res) => {
   }
 });
 
-app.put('/api/movies/:id', requireAuth, validateMovieData, (req, res) => {
+app.put('/api/movies/:id', requireAdmin, validateMovieData, (req, res) => {
   try {
     const { id } = req.params;
     const { title, year, director, genre, rating, age_rating, description } = req.body;
@@ -321,7 +321,7 @@ app.put('/api/movies/:id', requireAuth, validateMovieData, (req, res) => {
   }
 });
 
-app.delete('/api/movies/:id', requireAuth, (req, res) => {
+app.delete('/api/movies/:id', requireAdmin, (req, res) => {
   try {
     const { id } = req.params;
     
