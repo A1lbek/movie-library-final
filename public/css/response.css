@@ -1,0 +1,43 @@
+.response-page {
+  font-family: Arial, sans-serif;
+  padding: 40px;
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  background: #f5f7fa;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.response-page h2 {
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+  line-height: 1.4;
+}
+
+.links {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.links a {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.8rem 1.5rem;
+  border: 2px solid #3498db;
+  border-radius: 6px;
+  transition: all 0.3s;
+}
+
+.links a:hover {
+  background: #3498db;
+  color: white;
+  transform: translateY(-2px);
+}

@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Library - Home</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f0f1e;
+      min-height: 100vh;
+      color: #fff;
+    }
+
+    .navbar {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 15px 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      transition: background 0.3s;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .btn-login, .btn-register {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid white;
+    }
+
+    .btn-logout {
+      background: rgba(255,0,0,0.7);
+      border: 1px solid white;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn-logout:hover {
+      background: rgba(255,0,0,0.9);
+    }
+
+    .username-display {
+      color: white;
+      margin-right: 10px;
+      font-weight: 500;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    h1 {
+      text-align: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 30px;
+      font-size: 42px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 20px 12px 45px;
+      border: 2px solid #667eea;
+      border-radius: 25px;
+      font-size: 16px;
+      background: #1a1a2e;
+      color: #fff;
+      transition: all 0.3s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #764ba2;
+      box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #667eea;
+    }
+
+    .sort-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .sort-label {
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    .sort-select {
+      padding: 10px 15px;
+      border: 2px solid #667eea;
+      border-radius: 8px;
+      background: #1a1a2e;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .sort-select:focus {
+      outline: none;
+      border-color: #764ba2;
+    }
+
+    .movies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .movie-card {
+      background: #1a1a2e;
+      border-radius: 15px;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .movie-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .movie-poster {
+      width: 100%;
+      height: 350px;
+      object-fit: cover;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .movie-poster.placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .movie-info {
+      padding: 20px;
+    }
+
+    .movie-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #fff;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .movie-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    .movie-year {
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    .movie-rating {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 13px;
+    }
+
+    .movie-genre {
+      color: #888;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .movie-description {
+      color: #bbb;
+      font-size: 13px;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .movie-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #2a2a3e;
+    }
+
+    .btn-edit, .btn-delete {
+      flex: 1;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .btn-edit {
+      background: #ffc107;
+      color: #000;
+    }
+
+    .btn-edit:hover {
+      background: #ffca28;
+    }
+
+    .btn-delete {
+      background: #dc3545;
+      color: white;
+    }
+
+    .btn-delete:hover {
+      background: #e4465d;
+    }
+
+    .crud-section {
+      background: #1a1a2e;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      margin-bottom: 40px;
+      border: 1px solid #2a2a3e;
+    }
+
+    .crud-section h2 {
+      color: #667eea;
+      margin-bottom: 20px;
+    }
+
+    .add-movie-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      margin-bottom: 5px;
+      color: #aaa;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      padding: 10px;
+      border: 2px solid #2a2a3e;
+      border-radius: 6px;
+      font-size: 14px;
+      background: #0f0f1e;
+      color: #fff;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .form-actions {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-primary {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      padding: 12px 24px;
+      background: #6c757d;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .auth-required {
+      background: rgba(255, 193, 7, 0.1);
+      color: #ffc107;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+
+    .message {
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      display: none;
+    }
+
+    .message.success {
+      background: rgba(76, 175, 80, 0.2);
+      color: #4caf50;
+      border: 1px solid rgba(76, 175, 80, 0.3);
+    }
+
+    .message.error {
+      background: rgba(244, 67, 54, 0.2);
+      color: #f44336;
+      border: 1px solid rgba(244, 67, 54, 0.3);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 60px;
+      color: #667eea;
+    }
+
+    .loading i {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+    }
+
+    .empty-state i {
+      font-size: 60px;
+      margin-bottom: 20px;
+      color: #444;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+      background: #1a1a2e;
+      margin: 50px auto;
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 600px;
+      box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+      border: 1px solid #2a2a3e;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .close:hover {
+      color: #fff;
+    }
+
+    @media (max-width: 768px) {
+      .controls {
+        flex-direction: column;
+      }
+
+      .search-box {
+        width: 100%;
+      }
+
+      .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+      }
+
+      .movie-poster {
+        height: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <div class="logo">
+        <i class="fas fa-film"></i>
+        Movie Library
+      </div>
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <div id="authButtons">
+          <a href="/login" class="btn-login">Login</a>
+          <a href="/register" class="btn-register">Register</a>
+        </div>
+        <div id="userInfo" style="display: none;">
+          <span class="username-display" id="usernameText"></span>
+          <button class="btn-logout" onclick="logout()">Logout</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <h1>🎬 Discover Amazing Movies</h1>
+
+    <div id="messageBox" class="message"></div>
+
+    <div id="authRequiredMsg" class="auth-required" style="display: none;">
+      <i class="fas fa-info-circle"></i> Please <a href="/login" style="color: #ffc107; text-decoration: underline;">log in</a> to add, edit, or delete movies.
+    </div>
+
+    <section id="addMovieSection" style="display: none;" class="crud-section">
+      <h2><i class="fas fa-plus-circle"></i> Add New Movie</h2>
+      <form id="addMovieForm" class="add-movie-form">
+        <div class="form-group">
+          <label for="title">Title *</label>
+          <input type="text" id="title" required>
+        </div>
+        <div class="form-group">
+          <label for="year">Year *</label>
+          <input type="number" id="year" min="1888" max="2030" required>
+        </div>
+        <div class="form-group">
+          <label for="director">Director</label>
+          <input type="text" id="director">
+        </div>
+        <div class="form-group">
+          <label for="genre">Genre</label>
+          <input type="text" id="genre" placeholder="e.g., Action, Drama">
+        </div>
+        <div class="form-group">
+          <label for="rating">Rating</label>
+          <input type="number" id="rating" min="0" max="10" step="0.1">
+        </div>
+        <div class="form-group">
+          <label for="age_rating">Age Rating</label>
+          <select id="age_rating">
+            <option value="">Select...</option>
+            <option value="0+">0+</option>
+            <option value="6+">6+</option>
+            <option value="12+">12+</option>
+            <option value="14+">14+</option>
+            <option value="16+">16+</option>
+            <option value="18+">18+</option>
+          </select>
+        </div>
+        <div class="form-group" style="grid-column: 1 / -1;">
+          <label for="description">Description</label>
+          <textarea id="description" rows="3"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">
+            <i class="fas fa-plus"></i> Add Movie
+          </button>
+          <button type="reset" class="btn-secondary">
+            <i class="fas fa-redo"></i> Reset
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <div class="controls">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search movies by title, director, genre...">
+      </div>
+      <div class="sort-controls">
+        <span class="sort-label">Sort by:</span>
+        <select id="sortSelect" class="sort-select">
+          <option value="title-asc">Title (A-Z)</option>
+          <option value="title-desc">Title (Z-A)</option>
+          <option value="year-desc">Year (Newest)</option>
+          <option value="year-asc">Year (Oldest)</option>
+          <option value="rating-desc">Rating (Highest)</option>
+          <option value="rating-asc">Rating (Lowest)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="movies-grid" id="moviesGrid">
+      <div class="loading">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Loading movies...</p>
+      </div>
+    </div>
+  </main>
+
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeEditModal()">&times;</span>
+      <h2><i class="fas fa-edit"></i> Edit Movie</h2>
+      <form id="editMovieForm" class="add-movie-form">
+        <input type="hidden" id="edit_id">
+        <div class="form-group">
+          <label for="edit_title">Title *</label>
+          <input type="text" id="edit_title" required>
+        </div>
+        <div class="form-group">
+          <label for="edit_year">Year *</label>
+          <input type="number" id="edit_year" min="1888" max="2030" required>
+        </div>
+        <div class="form-group">
+          <label for="edit_director">Director</label>
+          <input type="text" id="edit_director">
+        </div>
+        <div class="form-group">
+          <label for="edit_genre">Genre</label>
+          <input type="text" id="edit_genre">
+        </div>
+        <div class="form-group">
+          <label for="edit_rating">Rating</label>
+          <input type="number" id="edit_rating" min="0" max="10" step="0.1">
+        </div>
+        <div class="form-group">
+          <label for="edit_age_rating">Age Rating</label>
+          <select id="edit_age_rating">
+            <option value="">Select...</option>
+            <option value="0+">0+</option>
+            <option value="6+">6+</option>
+            <option value="12+">12+</option>
+            <option value="14+">14+</option>
+            <option value="16+">16+</option>
+            <option value="18+">18+</option>
+          </select>
+        </div>
+        <div class="form-group" style="grid-column: 1 / -1;">
+          <label for="edit_description">Description</label>
+          <textarea id="edit_description" rows="3"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">
+            <i class="fas fa-save"></i> Save Changes
+          </button>
+          <button type="button" class="btn-secondary" onclick="closeEditModal()">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let isAuthenticated = false;
+    let currentUser = null;
+    let allMovies = [];
+    let filteredMovies = [];
+
+    async function checkAuth() {
+      try {
+        const response = await fetch('/api/auth/me');
+        if (response.ok) {
+          const data = await response.json();
+          isAuthenticated = true;
+          currentUser = data.user;
+          updateAuthUI();
+        } else {
+          isAuthenticated = false;
+          currentUser = null;
+          updateAuthUI();
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        isAuthenticated = false;
+        updateAuthUI();
+      }
+    }
+
+    function updateAuthUI() {
+      if (isAuthenticated && currentUser) {
+        document.getElementById('authButtons').style.display = 'none';
+        document.getElementById('userInfo').style.display = 'inline';
+        document.getElementById('usernameText').textContent = currentUser.username;
+        document.getElementById('addMovieSection').style.display = 'block';
+        document.getElementById('authRequiredMsg').style.display = 'none';
+      } else {
+        document.getElementById('authButtons').style.display = 'inline';
+        document.getElementById('userInfo').style.display = 'none';
+        document.getElementById('addMovieSection').style.display = 'none';
+        document.getElementById('authRequiredMsg').style.display = 'block';
+      }
+    }
+
+    async function logout() {
+      try {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        showMessage('Logged out successfully', 'success');
+        isAuthenticated = false;
+        currentUser = null;
+        updateAuthUI();
+        loadMovies();
+      } catch (error) {
+        showMessage('Logout failed', 'error');
+      }
+    }
+
+    async function loadMovies() {
+      try {
+        const response = await fetch('/api/movies');
+        const data = await response.json();
+        allMovies = data.movies || [];
+        filteredMovies = [...allMovies];
+        applySort();
+      } catch (error) {
+        document.getElementById('moviesGrid').innerHTML = 
+          '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Failed to load movies</p></div>';
+      }
+    }
+
+    function renderMovies(movies) {
+      const gridDiv = document.getElementById('moviesGrid');
+      
+      if (movies.length === 0) {
+        gridDiv.innerHTML = '<div class="empty-state"><i class="fas fa-film"></i><p>No movies found</p></div>';
+        return;
+      }
+
+      let html = '';
+      movies.forEach(movie => {
+        const posterUrl = movie.poster || '';
+        const hasPoster = posterUrl && posterUrl.trim() !== '';
+        
+        html += `
+          <div class="movie-card">
+            ${hasPoster ? 
+              `<img src="${posterUrl}" alt="${movie.title}" class="movie-poster" onerror="this.outerHTML='<div class=\\'movie-poster placeholder\\'><i class=\\'fas fa-film\\'></i></div>'">` :
+              `<div class="movie-poster placeholder"><i class="fas fa-film"></i></div>`
+            }
+            <div class="movie-info">
+              <div class="movie-title">${movie.title}</div>
+              <div class="movie-meta">
+                <span class="movie-year">${movie.year}</span>
+                <span class="movie-rating">★ ${movie.rating || 'N/A'}</span>
+              </div>
+              <div class="movie-genre">${Array.isArray(movie.genre) ? movie.genre.join(', ') : movie.genre || 'Unknown'}</div>
+              <div class="movie-description">${movie.description || 'No description available'}</div>
+              ${isAuthenticated ? `
+                <div class="movie-actions">
+                  <button class="btn-edit" onclick="editMovie('${movie._id}')">
+                    <i class="fas fa-edit"></i> Edit
+                  </button>
+                  <button class="btn-delete" onclick="deleteMovie('${movie._id}', '${movie.title.replace(/'/g, "\\'")}')">
+                    <i class="fas fa-trash"></i> Delete
+                  </button>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      });
+
+      gridDiv.innerHTML = html;
+    }
+
+    function applySort() {
+      const sortValue = document.getElementById('sortSelect').value;
+      const [field, order] = sortValue.split('-');
+
+      filteredMovies.sort((a, b) => {
+        let aVal = a[field];
+        let bVal = b[field];
+
+        if (field === 'title') {
+          aVal = (aVal || '').toLowerCase();
+          bVal = (bVal || '').toLowerCase();
+        } else {
+          aVal = aVal || 0;
+          bVal = bVal || 0;
+        }
+
+        if (order === 'asc') {
+          return aVal > bVal ? 1 : -1;
+        } else {
+          return aVal < bVal ? 1 : -1;
+        }
+      });
+
+      renderMovies(filteredMovies);
+    }
+
+    function applyFilter() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      
+      if (searchTerm === '') {
+        filteredMovies = [...allMovies];
+      } else {
+        filteredMovies = allMovies.filter(movie => {
+          const title = (movie.title || '').toLowerCase();
+          const director = (movie.director || '').toLowerCase();
+          const genre = Array.isArray(movie.genre) ? movie.genre.join(' ').toLowerCase() : (movie.genre || '').toLowerCase();
+          
+          return title.includes(searchTerm) || 
+                 director.includes(searchTerm) || 
+                 genre.includes(searchTerm);
+        });
+      }
+
+      applySort();
+    }
+
+    document.getElementById('searchInput').addEventListener('input', applyFilter);
+    document.getElementById('sortSelect').addEventListener('change', applySort);
+
+    document.getElementById('addMovieForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const movieData = {
+        title: document.getElementById('title').value,
+        year: parseInt(document.getElementById('year').value),
+        director: document.getElementById('director').value,
+        genre: document.getElementById('genre').value.split(',').map(g => g.trim()).filter(g => g),
+        rating: parseFloat(document.getElementById('rating').value) || null,
+        age_rating: document.getElementById('age_rating').value,
+        description: document.getElementById('description').value
+      };
+
+      try {
+        const response = await fetch('/api/movies', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(movieData)
+        });
+
+        if (response.ok) {
+          showMessage('Movie added successfully!', 'success');
+          document.getElementById('addMovieForm').reset();
+          loadMovies();
+        } else {
+          const error = await response.json();
+          showMessage(error.error || 'Failed to add movie', 'error');
+        }
+      } catch (error) {
+        showMessage('Network error occurred', 'error');
+      }
+    });
+
+    async function editMovie(id) {
+      const movie = allMovies.find(m => m._id === id);
+      if (!movie) return;
+
+      document.getElementById('edit_id').value = movie._id;
+      document.getElementById('edit_title').value = movie.title;
+      document.getElementById('edit_year').value = movie.year;
+      document.getElementById('edit_director').value = movie.director || '';
+      document.getElementById('edit_genre').value = Array.isArray(movie.genre) ? movie.genre.join(', ') : movie.genre || '';
+      document.getElementById('edit_rating').value = movie.rating || '';
+      document.getElementById('edit_age_rating').value = movie.age_rating || '';
+      document.getElementById('edit_description').value = movie.description || '';
+
+      document.getElementById('editModal').style.display = 'block';
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').style.display = 'none';
+    }
+
+    document.getElementById('editMovieForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const id = document.getElementById('edit_id').value;
+      const movieData = {
+        title: document.getElementById('edit_title').value,
+        year: parseInt(document.getElementById('edit_year').value),
+        director: document.getElementById('edit_director').value,
+        genre: document.getElementById('edit_genre').value.split(',').map(g => g.trim()).filter(g => g),
+        rating: parseFloat(document.getElementById('edit_rating').value) || null,
+        age_rating: document.getElementById('edit_age_rating').value,
+        description: document.getElementById('edit_description').value
+      };
+
+      try {
+        const response = await fetch(`/api/movies/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(movieData)
+        });
+
+        if (response.ok) {
+          showMessage('Movie updated successfully!', 'success');
+          closeEditModal();
+          loadMovies();
+        } else {
+          const error = await response.json();
+          showMessage(error.error || 'Failed to update movie', 'error');
+        }
+      } catch (error) {
+        showMessage('Network error occurred', 'error');
+      }
+    });
+
+    async function deleteMovie(id, title) {
+      if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
+
+      try {
+        const response = await fetch(`/api/movies/${id}`, {
+          method: 'DELETE'
+        });
+
+        if (response.ok) {
+          showMessage('Movie deleted successfully!', 'success');
+          loadMovies();
+        } else {
+          showMessage('Failed to delete movie', 'error');
+        }
+      } catch (error) {
+        showMessage('Network error occurred', 'error');
+      }
+    }
+
+    function showMessage(text, type) {
+      const messageBox = document.getElementById('messageBox');
+      messageBox.textContent = text;
+      messageBox.className = `message ${type}`;
+      messageBox.style.display = 'block';
+      
+      setTimeout(() => {
+        messageBox.style.display = 'none';
+      }, 4000);
+    }
+
+    window.onclick = function(event) {
+      const modal = document.getElementById('editModal');
+      if (event.target === modal) {
+        closeEditModal();
+      }
+    }
+
+    // Initialize
+    checkAuth();
+    loadMovies();
+  </script>
+</body>
+</html>

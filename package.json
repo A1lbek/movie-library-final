@@ -1,0 +1,36 @@
+{
+  "name": "movie-library",
+  "version": "5.0.0",
+  "description": "Movie Library - Final Project with Authentication, Authorization, and Role-Based Access Control",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "setup": "npm run create-admin && npm run migrate-movies",
+    "create-admin": "node scripts/create-admin.js",
+    "migrate-movies": "node scripts/migrate-movies.js",
+    "test": "node test-security.js"
+  },
+  "keywords": [
+    "express",
+    "mongodb",
+    "authentication",
+    "authorization",
+    "rbac",
+    "movies"
+  ],
+  "author": "Albek Gusmanov",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.0.0",
+    "dotenv": "^16.0.3",
+    "bcrypt": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
